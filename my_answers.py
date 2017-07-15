@@ -14,13 +14,13 @@ def window_transform_series(series, window_size):
     X = []
     y = []
 
-    for i in range(len(series)-window_size-1):
+    for i in range(len(series)-window_size):
         X.append(series[i:i+window_size])
-        y.append(series[i+window_size+1])
+        y.append(series[i+window_size])
 
     # reshape each 
     X = np.asarray(X)
-    X.shape = (np.shape(X)[0:2])
+    X.shape = (len(series)-window_size, window_size)
     y = np.asarray(y)
     y.shape = (len(y),1)
 
@@ -30,7 +30,7 @@ def window_transform_series(series, window_size):
 def build_part1_RNN(window_size):
     model = Sequential()
     model.add(LSTM(5, input_shape =(window_size,1)))
-    model.add(Dense(1, activation='tanh'))
+    model.add(Dense(1))
     return model
 
 
@@ -51,13 +51,16 @@ def window_transform_text(text, window_size, step_size):
     inputs = []
     outputs = []
 
-    for i in range(1,len(text)-window_size-1,window_size):
+    for i in range(0,len(text)-window_size,step_size):
     	inputs.append(text[i:i+window_size])
-    	outputs.append(text[i+window_size+1])
+    	outputs.append(text[i+window_size])
 
     return inputs,outputs
 
 # TODO build the required RNN model: 
 # a single LSTM hidden layer with softmax activation, categorical_crossentropy loss 
 def build_part2_RNN(window_size, num_chars):
-    pass
+    model = Sequential()
+    model.add(LSTM(200, input_shape=(window_size, num_chars)))
+    model.add(Dense(num_chars, activation='softmax'))
+    return model
